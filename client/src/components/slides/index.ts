@@ -4,3 +4,7 @@ export { GameModeSlide } from './GameModeSlide';
 export { GameBoardSlide } from './GameBoardSlide';
 export { StatisticsSlide } from './StatisticsSlide';
 export { SettingsSlide } from './SettingsSlide';
+export { ProfileSlide } from './ProfileSlide';
+export { AchievementsSlide } from './AchievementsSlide';
+export { OnlinePlayersSlide } from './OnlinePlayersSlide';
+export { ThemeSlide } from './ThemeSlide';

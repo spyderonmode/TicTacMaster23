@@ -345,8 +345,29 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
         }
       }
     } else if (lastMessage?.type === 'move' || lastMessage?.type === 'winning_move') {
-      // Clear syncing indicator when move is received
+      // Handle move synchronization directly in GameBoard for better responsiveness
       if (lastMessage.gameId === game?.id) {
+        console.log('🔄 WebSocket move received - updating board and turn immediately');
+        console.log('📋 New board from WebSocket:', lastMessage.board);
+        console.log('👤 New current player from WebSocket:', lastMessage.currentPlayer);
+        
+        // Update board and current player immediately from WebSocket message
+        if (lastMessage.board) {
+          setBoard(lastMessage.board);
+        }
+        if (lastMessage.currentPlayer) {
+          setCurrentPlayer(lastMessage.currentPlayer);
+        }
+        if (lastMessage.position) {
+          setLastMove(lastMessage.position);
+        }
+        
+        // Handle winning move highlighting
+        if (lastMessage.type === 'winning_move' && lastMessage.winningPositions) {
+          setWinningLine(lastMessage.winningPositions);
+        }
+        
+        // Clear syncing indicator
         setIsMoveSyncing(false);
       }
     }

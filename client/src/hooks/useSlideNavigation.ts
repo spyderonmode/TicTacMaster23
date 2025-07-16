@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-export type SlideId = 'welcome' | 'game-mode' | 'game-board' | 'statistics' | 'settings';
+export type SlideId = 'welcome' | 'game-mode' | 'game-board' | 'statistics' | 'settings' | 'profile' | 'achievements' | 'online-players' | 'theme';
 
 export interface SlideNavigationState {
   currentSlide: SlideId;
@@ -21,14 +21,14 @@ export const useSlideNavigation = (initialSlide: SlideId = 'welcome') => {
   }, []);
 
   const goToNextSlide = useCallback(() => {
-    const slides: SlideId[] = ['welcome', 'game-mode', 'game-board', 'statistics', 'settings'];
+    const slides: SlideId[] = ['welcome', 'game-mode', 'game-board', 'statistics', 'settings', 'profile', 'achievements', 'online-players', 'theme'];
     const currentIndex = slides.indexOf(state.currentSlide);
     const nextIndex = (currentIndex + 1) % slides.length;
     navigateToSlide(slides[nextIndex]);
   }, [state.currentSlide, navigateToSlide]);
 
   const goToPreviousSlide = useCallback(() => {
-    const slides: SlideId[] = ['welcome', 'game-mode', 'game-board', 'statistics', 'settings'];
+    const slides: SlideId[] = ['welcome', 'game-mode', 'game-board', 'statistics', 'settings', 'profile', 'achievements', 'online-players', 'theme'];
     const currentIndex = slides.indexOf(state.currentSlide);
     const prevIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
     navigateToSlide(slides[prevIndex]);
@@ -46,7 +46,7 @@ export const useSlideNavigation = (initialSlide: SlideId = 'welcome') => {
   }, [state.slideHistory]);
 
   const getAllSlides = useCallback((): SlideId[] => {
-    return ['welcome', 'game-mode', 'game-board', 'statistics', 'settings'];
+    return ['welcome', 'game-mode', 'game-board', 'statistics', 'settings', 'profile', 'achievements', 'online-players', 'theme'];
   }, []);
 
   const getCurrentSlideIndex = useCallback(() => {

@@ -10,7 +10,11 @@ import {
   GameModeSlide, 
   GameBoardSlide, 
   StatisticsSlide, 
-  SettingsSlide 
+  SettingsSlide,
+  ProfileSlide,
+  AchievementsSlide,
+  OnlinePlayersSlide,
+  ThemeSlide
 } from "@/components/slides";
 import { CreateRoomModal } from "@/components/CreateRoomModal";
 import { GameOverModal } from "@/components/GameOverModal";
@@ -429,6 +433,7 @@ export default function Home() {
           <WelcomeSlide 
             user={user}
             onNavigateToGameMode={() => navigateToSlide('game-mode')}
+            onNavigate={navigateToSlide}
             spectatorMode={spectatorMode}
             onSpectatorModeChange={setSpectatorMode}
           />
@@ -473,6 +478,34 @@ export default function Home() {
         return (
           <SettingsSlide 
             user={user}
+          />
+        );
+      case 'profile':
+        return (
+          <ProfileSlide 
+            onNavigate={navigateToSlide}
+            onBack={goBack}
+          />
+        );
+      case 'achievements':
+        return (
+          <AchievementsSlide 
+            onNavigate={navigateToSlide}
+            onBack={goBack}
+          />
+        );
+      case 'online-players':
+        return (
+          <OnlinePlayersSlide 
+            onNavigate={navigateToSlide}
+            onBack={goBack}
+          />
+        );
+      case 'theme':
+        return (
+          <ThemeSlide 
+            onNavigate={navigateToSlide}
+            onBack={goBack}
           />
         );
       default:
