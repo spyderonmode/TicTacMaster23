@@ -313,7 +313,9 @@ export function setupAuth(app: Express) {
       console.log('User synced to database:', user.id);
     } catch (error) {
       console.error('Error syncing user to database:', error);
-      return res.status(500).json({ error: 'Failed to sync user data' });
+      console.log('Database unavailable, but proceeding with login using fallback data');
+      // Don't fail login when database is unavailable - we have CSV fallback
+      // return res.status(500).json({ error: 'Failed to sync user data' });
     }
 
     const sessionData = { userId: user.id, username: user.username };
