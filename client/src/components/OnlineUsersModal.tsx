@@ -29,21 +29,49 @@ export function OnlineUsersModal({ open, onClose, currentRoom, user }: OnlineUse
   const [profileUser, setProfileUser] = useState<any>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
-  const { data: onlineUsers, isLoading } = useQuery({
+  const { data: onlineUsersData, isLoading } = useQuery({
     queryKey: ["/api/users/online"],
+    queryFn: async () => {
+      try {
+        const response = await fetch("/api/users/online", {
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error('Failed to fetch online users');
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Failed to fetch online users:', error);
+        return { users: [], total: 0 };
+      }
+    },
     refetchInterval: 5000, // Refresh every 5 seconds
     enabled: open,
   });
 
+  const onlineUsers = onlineUsersData || { users: [], total: 0 };
+
   // Fetch blocked users
   const { data: blockedUsersData } = useQuery({
     queryKey: ["/api/users/blocked"],
+    queryFn: async () => {
+      try {
+        const response = await fetch("/api/users/blocked", {
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error('Failed to fetch blocked users');
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Failed to fetch blocked users:', error);
+        return [];
+      }
+    },
     enabled: open,
   });
 
   // Update blocked users state when data changes
   useEffect(() => {
-    if (blockedUsersData) {
+    if (blockedUsersData && Array.isArray(blockedUsersData)) {
       setBlockedUsers(new Set(blockedUsersData.map((blocked: any) => blocked.blockedId)));
     }
   }, [blockedUsersData]);
@@ -257,7 +285,7 @@ export function OnlineUsersModal({ open, onClose, currentRoom, user }: OnlineUse
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Online Players ({onlineUsers?.total || 0})
+            Online Players ({onlineUsers.total || 0})
           </DialogTitle>
         </DialogHeader>
         
@@ -277,7 +305,7 @@ export function OnlineUsersModal({ open, onClose, currentRoom, user }: OnlineUse
               ) : (
                 <ScrollArea className="h-[400px] w-full">
                   <div className="space-y-2">
-                    {onlineUsers?.users?.length > 0 ? (
+                    {onlineUsers.users && onlineUsers.users.length > 0 ? (
                       onlineUsers.users.map((user: any) => {
                         const isBlocked = blockedUsers.has(user.userId);
                         return (

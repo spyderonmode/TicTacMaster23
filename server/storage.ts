@@ -305,7 +305,7 @@ export class DatabaseStorage implements IStorage {
       // Get all users with their online game stats
       const usersWithStats = await db.select({
         userId: users.id,
-        displayName: users.displayName,
+        // displayName: users.displayName, // Temporarily commented out until schema is updated
         firstName: users.firstName,
         lastName: users.lastName,
         profileImageUrl: users.profileImageUrl,
@@ -322,8 +322,8 @@ export class DatabaseStorage implements IStorage {
       // Calculate rankings with additional metrics
       const rankings = await Promise.all(
         usersWithStats.map(async (user, index) => {
-          const totalGames = user.wins + user.losses + user.draws;
-          const winRate = totalGames > 0 ? (user.wins / totalGames) * 100 : 0;
+          const totalGames = (user.wins || 0) + (user.losses || 0) + (user.draws || 0);
+          const winRate = totalGames > 0 ? ((user.wins || 0) / totalGames) * 100 : 0;
           
           // Get recent games for streak calculation
           const recentGames = await db.select({
@@ -380,13 +380,13 @@ export class DatabaseStorage implements IStorage {
 
           return {
             userId: user.userId,
-            displayName: user.displayName,
+            displayName: user.firstName || user.lastName || `User ${user.userId?.slice(0, 8) || 'Unknown'}`, // Fallback display name
             firstName: user.firstName,
             lastName: user.lastName,
             profileImageUrl: user.profileImageUrl,
-            wins: user.wins,
-            losses: user.losses,
-            draws: user.draws,
+            wins: user.wins || 0,
+            losses: user.losses || 0,
+            draws: user.draws || 0,
             totalGames,
             winRate,
             streak,
@@ -402,7 +402,7 @@ export class DatabaseStorage implements IStorage {
       switch (sortBy) {
         case 'wins':
           sortedRankings = rankings.sort((a, b) => {
-            if (b.wins !== a.wins) return b.wins - a.wins;
+            if ((b.wins || 0) !== (a.wins || 0)) return (b.wins || 0) - (a.wins || 0);
             return b.winRate - a.winRate; // Secondary sort by win rate
           });
           break;
@@ -417,7 +417,7 @@ export class DatabaseStorage implements IStorage {
           sortedRankings = rankings.sort((a, b) => {
             if (b.winRate !== a.winRate) return b.winRate - a.winRate;
             if (b.totalGames !== a.totalGames) return b.totalGames - a.totalGames; // Secondary sort by total games
-            return b.wins - a.wins; // Tertiary sort by wins
+            return (b.wins || 0) - (a.wins || 0); // Tertiary sort by wins
           });
           break;
       }
