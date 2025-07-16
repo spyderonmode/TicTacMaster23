@@ -449,6 +449,7 @@ export default function Home() {
             onNavigateToGameBoard={() => navigateToSlide('game-board')}
             onMatchmakingStart={handleMatchmakingStart}
             isMatchmaking={isMatchmaking}
+            onlineUserCount={onlineUserCount}
           />
         );
       case 'game-board':
@@ -472,8 +473,6 @@ export default function Home() {
         return (
           <SettingsSlide 
             user={user}
-            currentRoom={currentRoom}
-            onlineUserCount={onlineUserCount}
           />
         );
       default:

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ProfileManager } from '@/components/ProfileManager';
 import { ThemeSelector } from '@/components/ThemeSelector';
-import { OnlineUsersModal } from '@/components/OnlineUsersModal';
 import { AchievementModal } from '@/components/AchievementModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,6 @@ import {
   Settings, 
   User, 
   Palette, 
-  Users, 
   Trophy, 
   LogOut, 
   Volume2, 
@@ -22,13 +20,10 @@ import { logout } from "@/lib/firebase";
 
 interface SettingsSlideProps {
   user: any;
-  currentRoom: any;
-  onlineUserCount: number;
 }
 
-export const SettingsSlide = ({ user, currentRoom, onlineUserCount }: SettingsSlideProps) => {
+export const SettingsSlide = ({ user }: SettingsSlideProps) => {
   const [showProfile, setShowProfile] = useState(false);
-  const [showOnlineUsers, setShowOnlineUsers] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -182,49 +177,6 @@ export const SettingsSlide = ({ user, currentRoom, onlineUserCount }: SettingsSl
           </CardContent>
         </Card>
 
-        {/* Community & Social */}
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center space-x-2">
-              <Users className="w-5 h-5" />
-              <span>Community</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-white font-medium">Online Players</h4>
-                  <p className="text-gray-400 text-sm">View who's currently online</p>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowOnlineUsers(true)}
-                  className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
-                >
-                  <Users className="w-4 h-4 mr-2" />
-                  {onlineUserCount} Online
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-white font-medium">Achievements</h4>
-                  <p className="text-gray-400 text-sm">View your earned achievements</p>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAchievements(true)}
-                  className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
-                >
-                  <Trophy className="w-4 h-4 mr-2" />
-                  View All
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Account Actions */}
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
@@ -289,13 +241,6 @@ export const SettingsSlide = ({ user, currentRoom, onlineUserCount }: SettingsSl
         user={user}
         open={showProfile}
         onClose={() => setShowProfile(false)}
-      />
-
-      <OnlineUsersModal 
-        open={showOnlineUsers}
-        onClose={() => setShowOnlineUsers(false)}
-        currentRoom={currentRoom}
-        user={user}
       />
 
       <AchievementModal 

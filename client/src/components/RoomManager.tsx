@@ -33,8 +33,8 @@ export function RoomManager({
   const queryClient = useQueryClient();
 
   const joinRoomMutation = useMutation({
-    mutationFn: async (data: { code: string, role: 'player' | 'spectator' }) => {
-      const response = await apiRequest('POST', `/api/rooms/${data.code}/join`, { role: data.role });
+    mutationFn: async (data: { code: string }) => {
+      const response = await apiRequest('POST', `/api/rooms/${data.code}/join`, { role: 'player' });
       return response.json();
     },
     onSuccess: (data) => {
@@ -110,11 +110,10 @@ export function RoomManager({
     },
   });
 
-  const handleJoinRoom = (role: 'player' | 'spectator' = 'player') => {
+  const handleJoinRoom = () => {
     if (joinCode.trim()) {
       joinRoomMutation.mutate({ 
-        code: joinCode.trim().toUpperCase(), 
-        role 
+        code: joinCode.trim().toUpperCase()
       });
     }
   };
@@ -146,18 +145,11 @@ export function RoomManager({
               />
               <div className="flex space-x-2">
                 <Button 
-                  onClick={() => handleJoinRoom('player')}
+                  onClick={handleJoinRoom}
                   disabled={!joinCode.trim() || joinRoomMutation.isPending}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  className="w-full bg-green-600 hover:bg-green-700"
                 >
-                  Join as Player
-                </Button>
-                <Button 
-                  onClick={() => handleJoinRoom('spectator')}
-                  disabled={!joinCode.trim() || joinRoomMutation.isPending}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
-                >
-                  Join as Spectator
+                  Join Room
                 </Button>
               </div>
             </div>

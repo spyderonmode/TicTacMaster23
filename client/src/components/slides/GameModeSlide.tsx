@@ -1,8 +1,10 @@
 import { GameModeSelector } from '@/components/GameModeSelector';
 import { RoomManager } from '@/components/RoomManager';
+import { OnlineUsersModal } from '@/components/OnlineUsersModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, Loader2 } from 'lucide-react';
+import { Zap, Loader2, Users } from 'lucide-react';
+import { useState } from 'react';
 
 interface GameModeSlideProps {
   selectedMode: 'ai' | 'pass-play' | 'online';
@@ -18,6 +20,7 @@ interface GameModeSlideProps {
   onNavigateToGameBoard: () => void;
   onMatchmakingStart: () => void;
   isMatchmaking: boolean;
+  onlineUserCount: number;
 }
 
 export const GameModeSlide = ({
@@ -33,8 +36,10 @@ export const GameModeSlide = ({
   user,
   onNavigateToGameBoard,
   onMatchmakingStart,
-  isMatchmaking
+  isMatchmaking,
+  onlineUserCount
 }: GameModeSlideProps) => {
+  const [showOnlineUsers, setShowOnlineUsers] = useState(false);
   const handleModeSelection = (mode: 'ai' | 'pass-play' | 'online') => {
     onModeChange(mode);
     if (mode === 'ai' || mode === 'pass-play') {
@@ -67,6 +72,28 @@ export const GameModeSlide = ({
         {/* Online Multiplayer Section */}
         {selectedMode === 'online' && (
           <div className="space-y-6">
+            {/* Online Players */}
+            <Card className="bg-slate-800 border-slate-700 max-w-2xl mx-auto">
+              <CardHeader>
+                <CardTitle className="text-lg">Online Community</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-white font-medium">Online Players</h4>
+                    <p className="text-gray-400 text-sm">View who's currently online and chat with them</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowOnlineUsers(true)}
+                    className="bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    {onlineUserCount} Online
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
             {/* Quick Match */}
             <Card className="bg-slate-800 border-slate-700 max-w-2xl mx-auto">
               <CardHeader>
@@ -209,6 +236,14 @@ export const GameModeSlide = ({
           </div>
         )}
       </div>
+
+      {/* Online Users Modal */}
+      <OnlineUsersModal 
+        open={showOnlineUsers}
+        onClose={() => setShowOnlineUsers(false)}
+        currentRoom={currentRoom}
+        user={user}
+      />
     </div>
   );
 };
