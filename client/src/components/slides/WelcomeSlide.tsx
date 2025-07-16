@@ -1,13 +1,16 @@
-import { User, GamepadIcon } from 'lucide-react';
+import { User, GamepadIcon, Eye } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 
 interface WelcomeSlideProps {
   user: any;
   onNavigateToGameMode: () => void;
+  spectatorMode?: boolean;
+  onSpectatorModeChange?: (enabled: boolean) => void;
 }
 
-export const WelcomeSlide = ({ user, onNavigateToGameMode }: WelcomeSlideProps) => {
+export const WelcomeSlide = ({ user, onNavigateToGameMode, spectatorMode = false, onSpectatorModeChange }: WelcomeSlideProps) => {
   return (
     <div className="h-full flex items-center justify-center p-6">
       <div className="max-w-2xl mx-auto text-center space-y-8">
@@ -73,6 +76,33 @@ export const WelcomeSlide = ({ user, onNavigateToGameMode }: WelcomeSlideProps) 
             <p className="text-sm text-gray-400">Track your progress</p>
           </div>
         </div>
+
+        {/* Spectator Mode Preference - Moved from Settings Slide */}
+        <Card className="bg-slate-800 border-slate-700 max-w-md mx-auto">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Eye className="w-5 h-5 text-blue-500" />
+                <div>
+                  <h3 className="font-semibold text-white">Spectator Mode</h3>
+                  <p className="text-sm text-gray-400">Prefer to watch games only</p>
+                </div>
+              </div>
+              <Switch
+                checked={spectatorMode}
+                onCheckedChange={onSpectatorModeChange}
+                className="data-[state=checked]:bg-blue-600"
+              />
+            </div>
+            {spectatorMode && (
+              <div className="mt-2 p-2 bg-blue-900/20 rounded border border-blue-500/20">
+                <p className="text-xs text-blue-300">
+                  When enabled, you'll default to joining rooms as a spectator instead of a player.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Get Started Button */}
         <Button 

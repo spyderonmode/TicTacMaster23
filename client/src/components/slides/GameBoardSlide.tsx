@@ -84,23 +84,26 @@ export const GameBoardSlide = ({
                 Main Menu
               </Button>
               
-              <Button 
-                onClick={onPlayAgain}
-                disabled={isCreatingGame}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                {isCreatingGame ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Starting...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    New Game
-                  </>
-                )}
-              </Button>
+              {/* Only show New Game button for AI and pass-play modes, not for online mode */}
+              {selectedMode !== 'online' && (
+                <Button 
+                  onClick={onPlayAgain}
+                  disabled={isCreatingGame}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {isCreatingGame ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Starting...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      New Game
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
 
             {/* Game Rules */}
