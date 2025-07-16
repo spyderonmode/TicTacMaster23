@@ -32,68 +32,61 @@ interface ThemePreview {
 }
 
 const THEME_PREVIEWS: Record<string, ThemePreview> = {
-  'dark': {
-    name: 'Dark',
-    background: 'bg-gray-900',
-    cardBackground: 'bg-gray-800',
-    textColor: 'text-gray-100',
+  'default': {
+    name: 'Default',
+    background: 'bg-slate-900',
+    cardBackground: 'bg-slate-800',
+    textColor: 'text-white',
     accentColor: 'bg-blue-600',
-    borderColor: 'border-gray-700'
+    borderColor: 'border-slate-700'
   },
-  'light': {
-    name: 'Light',
-    background: 'bg-gray-50',
-    cardBackground: 'bg-white',
-    textColor: 'text-gray-900',
-    accentColor: 'bg-blue-600',
-    borderColor: 'border-gray-200'
+  'neon': {
+    name: 'Neon',
+    background: 'bg-black',
+    cardBackground: 'bg-gray-900',
+    textColor: 'text-cyan-300',
+    accentColor: 'bg-cyan-500',
+    borderColor: 'border-cyan-400'
   },
-  'blue': {
-    name: 'Ocean Blue',
-    background: 'bg-blue-950',
-    cardBackground: 'bg-blue-900',
-    textColor: 'text-blue-50',
-    accentColor: 'bg-blue-500',
-    borderColor: 'border-blue-700'
-  },
-  'green': {
-    name: 'Forest Green',
-    background: 'bg-green-950',
-    cardBackground: 'bg-green-900',
-    textColor: 'text-green-50',
-    accentColor: 'bg-green-500',
-    borderColor: 'border-green-700'
-  },
-  'purple': {
-    name: 'Royal Purple',
-    background: 'bg-purple-950',
-    cardBackground: 'bg-purple-900',
-    textColor: 'text-purple-50',
-    accentColor: 'bg-purple-500',
-    borderColor: 'border-purple-700'
-  },
-  'sunset': {
-    name: 'Sunset',
-    background: 'bg-gradient-to-br from-orange-900 to-pink-900',
-    cardBackground: 'bg-orange-800/50',
+  'autumn': {
+    name: 'Autumn',
+    background: 'bg-orange-900',
+    cardBackground: 'bg-orange-800',
     textColor: 'text-orange-50',
     accentColor: 'bg-orange-500',
     borderColor: 'border-orange-600'
   },
-  'neon': {
-    name: 'Neon',
-    background: 'bg-gray-900',
-    cardBackground: 'bg-gray-800',
-    textColor: 'text-cyan-100',
-    accentColor: 'bg-cyan-500',
-    borderColor: 'border-cyan-400'
+  'minimalist': {
+    name: 'Minimalist',
+    background: 'bg-gray-50',
+    cardBackground: 'bg-white',
+    textColor: 'text-gray-900',
+    accentColor: 'bg-gray-600',
+    borderColor: 'border-gray-200'
+  },
+  'nature': {
+    name: 'Nature',
+    background: 'bg-green-900',
+    cardBackground: 'bg-green-800',
+    textColor: 'text-green-50',
+    accentColor: 'bg-green-500',
+    borderColor: 'border-green-600'
+  },
+  'space': {
+    name: 'Space',
+    background: 'bg-indigo-950',
+    cardBackground: 'bg-indigo-900',
+    textColor: 'text-indigo-50',
+    accentColor: 'bg-indigo-500',
+    borderColor: 'border-indigo-700'
   }
 };
 
 export function ThemeSlide({ onNavigate, onBack }: ThemeSlideProps) {
-  const { currentTheme, setTheme, themes, isDarkMode, setIsDarkMode } = useTheme();
+  const { currentTheme, setTheme, themes } = useTheme();
   const { toast } = useToast();
   const [previewTheme, setPreviewTheme] = useState<string | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(true); // Local state for dark mode
 
   const handleThemeChange = (themeName: string) => {
     setTheme(themeName);
@@ -343,8 +336,8 @@ export function ThemeSlide({ onNavigate, onBack }: ThemeSlideProps) {
         <Button 
           variant="outline" 
           onClick={() => {
-            setTheme('dark');
-            toast({ title: "Theme Reset", description: "Reset to default dark theme" });
+            setTheme('default');
+            toast({ title: "Theme Reset", description: "Reset to default theme" });
           }}
         >
           Reset to Default
