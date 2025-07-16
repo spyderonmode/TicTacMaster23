@@ -26,6 +26,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, count, or, ne, isNull, isNotNull, sql } from "drizzle-orm";
+import { csvFallback } from "./csvFallback";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -244,32 +245,42 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserStats(userId: string): Promise<{ wins: number; losses: number; draws: number }> {
-    const user = await this.getUser(userId);
-    return {
-      wins: user?.wins || 0,
-      losses: user?.losses || 0,
-      draws: user?.draws || 0,
-    };
+    try {
+      const user = await this.getUser(userId);
+      return {
+        wins: user?.wins || 0,
+        losses: user?.losses || 0,
+        draws: user?.draws || 0,
+      };
+    } catch (error) {
+      console.error('Database unavailable, using CSV fallback for getUserStats:', error);
+      return csvFallback.getUserStats(userId);
+    }
   }
 
   async getOnlineGameStats(userId: string): Promise<{ wins: number; losses: number; draws: number; totalGames: number }> {
-    // Since we're properly updating user stats in the database, just return the user's stats
-    // This represents their online game performance since we only update stats for online games
-    const user = await this.getUser(userId);
-    if (!user) {
-      return { wins: 0, losses: 0, draws: 0, totalGames: 0 };
+    try {
+      // Since we're properly updating user stats in the database, just return the user's stats
+      // This represents their online game performance since we only update stats for online games
+      const user = await this.getUser(userId);
+      if (!user) {
+        return { wins: 0, losses: 0, draws: 0, totalGames: 0 };
+      }
+
+      const wins = user.wins || 0;
+      const losses = user.losses || 0;
+      const draws = user.draws || 0;
+
+      return {
+        wins,
+        losses,
+        draws,
+        totalGames: wins + losses + draws
+      };
+    } catch (error) {
+      console.error('Database unavailable, using CSV fallback for getOnlineGameStats:', error);
+      return csvFallback.getOnlineGameStats(userId);
     }
-
-    const wins = user.wins || 0;
-    const losses = user.losses || 0;
-    const draws = user.draws || 0;
-
-    return {
-      wins,
-      losses,
-      draws,
-      totalGames: wins + losses + draws
-    };
   }
 
   // Blocked Users methods
@@ -445,11 +456,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserAchievements(userId: string): Promise<Achievement[]> {
-    return await db
-      .select()
-      .from(achievements)
-      .where(eq(achievements.userId, userId))
-      .orderBy(desc(achievements.unlockedAt));
+    try {
+      return await db
+        .select()
+        .from(achievements)
+        .where(eq(achievements.userId, userId))
+        .orderBy(desc(achievements.unlockedAt));
+    } catch (error) {
+      console.error('Database unavailable, using CSV fallback for getUserAchievements:', error);
+      return csvFallback.getUserAchievements(userId);
+    }
   }
 
   async hasAchievement(userId: string, achievementType: string): Promise<boolean> {
