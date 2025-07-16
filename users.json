@@ -114,5 +114,15 @@
     "emailVerificationToken": "c025b40d-15fb-4f05-b3ff-111da5f14284",
     "emailVerificationExpiry": "2025-07-17T15:47:53.860Z",
     "createdAt": "2025-07-16T15:47:53.860Z"
+  },
+  {
+    "id": "test-stats-user-123",
+    "username": "testuser",
+    "password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+    "email": "test@example.com",
+    "displayName": "Test User",
+    "profilePicture": null,
+    "isEmailVerified": true,
+    "createdAt": "2025-07-16T15:51:00.000Z"
   }
 ]

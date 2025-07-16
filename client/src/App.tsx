@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { isEmailVerified } from "@/lib/userUtils";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
+import TestPage from "@/pages/test";
 import Auth from "@/pages/auth";
 import VerifyEmail from "@/pages/verify-email";
 import ResetPassword from "@/pages/reset-password";
@@ -79,6 +80,9 @@ function Router() {
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/not-found" component={NotFound} />
+      <Route path="/dev-test">
+        <TestPage />
+      </Route>
       <Route path="/">
         {isAuthenticated && isEmailVerified(user) ? <Home /> : <Auth />}
       </Route>

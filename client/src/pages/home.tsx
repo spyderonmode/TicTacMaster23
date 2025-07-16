@@ -528,6 +528,7 @@ export default function Home() {
       getAllSlides={getAllSlides}
       getCurrentSlideIndex={getCurrentSlideIndex}
       navigateToSlide={navigateToSlide}
+      user={user}
     >
       {renderCurrentSlide()}
 
