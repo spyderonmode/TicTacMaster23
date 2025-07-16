@@ -1168,6 +1168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             player: playerSymbol,
             board: newBoard,
             currentPlayer: nextPlayer,
+            timestamp: Date.now(), // Add timestamp for synchronization
             playerXInfo: playerXInfo ? {
               displayName: playerXInfo.displayName,
               firstName: playerXInfo.firstName,

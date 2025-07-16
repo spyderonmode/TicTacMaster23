@@ -113,16 +113,26 @@ export default function Home() {
         case 'move':
           if (currentGame && lastMessage.gameId === currentGame.id) {
             setCurrentGame(prevGame => {
-              const updatedGame = {
-                ...prevGame,
-                board: lastMessage.board,
-                currentPlayer: lastMessage.currentPlayer,
-                lastMove: lastMessage.position,
-                playerXInfo: lastMessage.playerXInfo || prevGame.playerXInfo,
-                playerOInfo: lastMessage.playerOInfo || prevGame.playerOInfo,
-                timestamp: Date.now()
-              };
-              return updatedGame;
+              // Only update if this is a newer move (prevent out-of-order updates)
+              const messageTimestamp = lastMessage.timestamp || Date.now();
+              const currentTimestamp = prevGame.timestamp || 0;
+              
+              if (messageTimestamp >= currentTimestamp) {
+                const updatedGame = {
+                  ...prevGame,
+                  board: lastMessage.board,
+                  currentPlayer: lastMessage.currentPlayer,
+                  lastMove: lastMessage.position,
+                  playerXInfo: lastMessage.playerXInfo || prevGame.playerXInfo,
+                  playerOInfo: lastMessage.playerOInfo || prevGame.playerOInfo,
+                  timestamp: messageTimestamp
+                };
+                console.log('🔄 Move synchronized successfully:', lastMessage.position);
+                return updatedGame;
+              } else {
+                console.log('⏰ Ignoring outdated move message');
+                return prevGame;
+              }
             });
           }
           break;

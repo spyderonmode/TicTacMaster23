@@ -190,6 +190,7 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
   const [playerOReaction, setPlayerOReaction] = useState<PlayerReaction | null>(null);
   const [reactionTimeouts, setReactionTimeouts] = useState<{ X?: NodeJS.Timeout; O?: NodeJS.Timeout }>({});
   const [showReactionPanel, setShowReactionPanel] = useState(false);
+  const [isMoveSyncing, setIsMoveSyncing] = useState(false);
   
   // Update winning line when game has winning positions
   useEffect(() => {
@@ -330,7 +331,7 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
   // Remove WebSocket handling from GameBoard - it's now handled in Home component
   // This prevents double handling and state conflicts
 
-  // Handle incoming WebSocket messages for reactions
+  // Handle incoming WebSocket messages for reactions and moves
   useEffect(() => {
     if (lastMessage?.type === 'player_reaction') {
       console.log('🎭 Received player reaction:', lastMessage);
@@ -343,8 +344,13 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
           setPlayerReaction(playerSymbol, reactionType);
         }
       }
+    } else if (lastMessage?.type === 'move' || lastMessage?.type === 'winning_move') {
+      // Clear syncing indicator when move is received
+      if (lastMessage.gameId === game?.id) {
+        setIsMoveSyncing(false);
+      }
     }
-  }, [lastMessage]);
+  }, [lastMessage, game?.id]);
 
   // Debug effect to track board state changes
   useEffect(() => {
@@ -382,13 +388,14 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
     onSuccess: (data) => {
       console.log('🎯 Move mutation success:', data);
       if (game && !game.id.startsWith('local-game')) {
-        // For online games, the Home component will handle WebSocket updates
-        // No need to update local state here
+        // For online games, show syncing status
+        setIsMoveSyncing(true);
+        // Set timeout to clear syncing status if WebSocket doesn't respond quickly
+        setTimeout(() => {
+          setIsMoveSyncing(false);
+        }, 3000);
         console.log('✅ Move successful, WebSocket will handle board update');
-        
-
       }
-      // For online games, don't force board update since WebSocket handles it
       // For local games, board is already updated in handleLocalMove
     },
     onError: (error) => {
@@ -859,7 +866,25 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
     <Card className={`${theme.boardStyle}`}>
       <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className={`text-2xl ${theme.textColor}`}>Game Board</CardTitle>
+          <div className="flex items-center space-x-2">
+            <CardTitle className={`text-2xl ${theme.textColor}`}>Game Board</CardTitle>
+            {/* Move synchronization indicator for online games */}
+            {gameMode === 'online' && isMoveSyncing && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="flex items-center space-x-1 text-xs text-blue-400"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-3 h-3 border border-blue-400 border-t-transparent rounded-full"
+                />
+                <span>Syncing...</span>
+              </motion.div>
+            )}
+          </div>
           <div className="flex flex-col space-y-3 text-right">
             {/* Player X - Top */}
             <div className="flex items-center justify-end space-x-2">
