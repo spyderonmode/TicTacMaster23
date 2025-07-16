@@ -175,7 +175,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             username: userInfo?.username || user.username,
             displayName: userInfo?.displayName || userInfo?.firstName || user.displayName,
             firstName: userInfo?.firstName,
-            profilePicture: userInfo?.profilePicture,
+            profilePicture: userInfo?.profileImageUrl,
             profileImageUrl: userInfo?.profileImageUrl,
             inRoom: !!user.roomId,
             lastSeen: user.lastSeen,
@@ -267,7 +267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         senderInfo = {
           userId: senderId,
           username: senderData.username || senderData.id,
-          displayName: senderData.displayName || senderData.firstName || senderData.username,
+          displayName: senderData.displayName || senderData.firstName || senderData.username || 'Player',
           roomId: undefined,
           lastSeen: new Date()
         };
@@ -288,7 +288,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             type: 'chat_message_received',
             message: {
               senderId,
-              senderName: senderInfo.displayName || senderInfo.username,
+              senderName: senderInfo?.displayName || senderInfo?.username || 'Player',
               message,
               timestamp: new Date().toISOString()
             }
