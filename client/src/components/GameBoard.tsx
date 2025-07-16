@@ -340,8 +340,8 @@ export function GameBoard({ game, onGameOver, gameMode, user }: GameBoardProps) 
         const playerSymbol = lastMessage.playerSymbol;
         
         // Show the reaction for the specified player
-        if (reactionType && REACTION_EMOJIS[reactionType]) {
-          setPlayerReaction(playerSymbol, reactionType);
+        if (reactionType && reactionType in REACTION_EMOJIS) {
+          setPlayerReaction(playerSymbol, reactionType as keyof typeof REACTION_EMOJIS);
         }
       }
     } else if (lastMessage?.type === 'move' || lastMessage?.type === 'winning_move') {
