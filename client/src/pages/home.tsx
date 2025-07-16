@@ -16,6 +16,7 @@ import { CreateRoomModal } from "@/components/CreateRoomModal";
 import { GameOverModal } from "@/components/GameOverModal";
 import { EmailVerificationModal } from "@/components/EmailVerificationModal";
 import { MatchmakingModal } from "@/components/MatchmakingModal";
+import { ChatPopup } from "@/components/ChatPopup";
 
 export default function Home() {
   const { user } = useAuth();
@@ -47,6 +48,14 @@ export default function Home() {
   const [showMatchmaking, setShowMatchmaking] = useState(false);
   const [isMatchmaking, setIsMatchmaking] = useState(false);
   const [onlineUserCount, setOnlineUserCount] = useState(0);
+
+  // Chat state
+  const [showChatPopup, setShowChatPopup] = useState(false);
+  const [chatPartner, setChatPartner] = useState<any>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+
+  // Spectator mode preference
+  const [spectatorMode, setSpectatorMode] = useState(false);
 
   const { data: userStats } = useQuery({
     queryKey: ["/api/users/online-stats"],
@@ -104,16 +113,26 @@ export default function Home() {
         case 'move':
           if (currentGame && lastMessage.gameId === currentGame.id) {
             setCurrentGame(prevGame => {
-              const updatedGame = {
-                ...prevGame,
-                board: lastMessage.board,
-                currentPlayer: lastMessage.currentPlayer,
-                lastMove: lastMessage.position,
-                playerXInfo: lastMessage.playerXInfo || prevGame.playerXInfo,
-                playerOInfo: lastMessage.playerOInfo || prevGame.playerOInfo,
-                timestamp: Date.now()
-              };
-              return updatedGame;
+              // Only update if this is a newer move (prevent out-of-order updates)
+              const messageTimestamp = lastMessage.timestamp || Date.now();
+              const currentTimestamp = prevGame.timestamp || 0;
+              
+              if (messageTimestamp >= currentTimestamp) {
+                const updatedGame = {
+                  ...prevGame,
+                  board: lastMessage.board,
+                  currentPlayer: lastMessage.currentPlayer,
+                  lastMove: lastMessage.position,
+                  playerXInfo: lastMessage.playerXInfo || prevGame.playerXInfo,
+                  playerOInfo: lastMessage.playerOInfo || prevGame.playerOInfo,
+                  timestamp: messageTimestamp
+                };
+                console.log('🔄 Move synchronized successfully:', lastMessage.position);
+                return updatedGame;
+              } else {
+                console.log('⏰ Ignoring outdated move message');
+                return prevGame;
+              }
             });
           }
           break;
@@ -166,6 +185,39 @@ export default function Home() {
             setTimeout(() => {
               window.location.reload();
             }, 2000);
+          }
+          break;
+        case 'chat_message_received':
+          // Handle incoming chat message and show popup
+          if (lastMessage.message) {
+            const { senderId, senderName, message, timestamp } = lastMessage.message;
+            
+            // Don't show popup for own messages
+            if (senderId !== user?.userId && senderId !== user?.id) {
+              const newMessage = {
+                id: `${senderId}-${timestamp}`,
+                senderId,
+                senderName,
+                message,
+                timestamp
+              };
+              
+              // Add message to chat history
+              setChatMessages(prev => [...prev, newMessage]);
+              
+              // Set up chat partner and show popup
+              setChatPartner({
+                id: senderId,
+                name: senderName
+              });
+              setShowChatPopup(true);
+              
+              toast({
+                title: "New Message",
+                description: `${senderName}: ${message}`,
+                duration: 3000,
+              });
+            }
           }
           break;
       }
@@ -233,6 +285,26 @@ export default function Home() {
   const handleMatchFound = (room: any) => {
     setIsMatchmaking(false);
     handleRoomJoin(room);
+  };
+
+  // Chat handlers
+  const handleSendChatMessage = (message: string) => {
+    // Add the sent message to local chat history
+    if (chatPartner && user) {
+      const newMessage = {
+        id: `${user.userId || user.id}-${Date.now()}`,
+        senderId: user.userId || user.id,
+        senderName: user.displayName || user.firstName || user.username || 'You',
+        message,
+        timestamp: Date.now()
+      };
+      setChatMessages(prev => [...prev, newMessage]);
+    }
+  };
+
+  const handleCloseChatPopup = () => {
+    setShowChatPopup(false);
+    // Keep chat partner and messages for when reopened
   };
 
   // Initialize local game for AI and pass-play modes
@@ -357,6 +429,8 @@ export default function Home() {
           <WelcomeSlide 
             user={user}
             onNavigateToGameMode={() => navigateToSlide('game-mode')}
+            spectatorMode={spectatorMode}
+            onSpectatorModeChange={setSpectatorMode}
           />
         );
       case 'game-mode':
@@ -452,6 +526,15 @@ export default function Home() {
         open={showMatchmaking}
         onClose={handleMatchmakingClose}
         onMatchFound={handleMatchFound}
+        user={user}
+      />
+
+      <ChatPopup
+        isOpen={showChatPopup}
+        onClose={handleCloseChatPopup}
+        chatPartner={chatPartner}
+        messages={chatMessages}
+        onSendMessage={handleSendChatMessage}
         user={user}
       />
     </SlideContainer>
