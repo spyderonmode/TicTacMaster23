@@ -584,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create new game with consistent player assignments
-      const sortedPlayers = players.sort((a, b) => a.userId.localeCompare(b.userId));
+      const sortedPlayers = players.sort((a, b) => (a.userId || '').localeCompare(b.userId || ''));
       const playerX = sortedPlayers[0];
       const playerO = sortedPlayers[1];
       
@@ -607,14 +607,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get player information with achievements
       const [playerXInfo, playerOInfo] = await Promise.all([
-        storage.getUser(game.playerXId),
-        storage.getUser(game.playerOId)
+        game.playerXId ? storage.getUser(game.playerXId) : Promise.resolve(null),
+        game.playerOId ? storage.getUser(game.playerOId) : Promise.resolve(null)
       ]);
       
       // Get achievements for both players
       const [playerXAchievements, playerOAchievements] = await Promise.all([
-        playerXInfo ? storage.getUserAchievements(game.playerXId) : Promise.resolve([]),
-        playerOInfo ? storage.getUserAchievements(game.playerOId) : Promise.resolve([])
+        playerXInfo && game.playerXId ? storage.getUserAchievements(game.playerXId) : Promise.resolve([]),
+        playerOInfo && game.playerOId ? storage.getUserAchievements(game.playerOId) : Promise.resolve([])
       ]);
       
       const gameWithPlayers = {
@@ -691,14 +691,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log('🎮 Game already exists for room:', existingGame.id);
           // Get player information for the existing game with achievements
           const [playerXInfo, playerOInfo] = await Promise.all([
-            storage.getUser(existingGame.playerXId),
+            existingGame.playerXId ? storage.getUser(existingGame.playerXId) : Promise.resolve(null),
             existingGame.playerOId && existingGame.playerOId !== 'AI' ? storage.getUser(existingGame.playerOId) : Promise.resolve(null)
           ]);
           
           // Get achievements for both players
           const [playerXAchievements, playerOAchievements] = await Promise.all([
-            playerXInfo ? storage.getUserAchievements(existingGame.playerXId) : Promise.resolve([]),
-            playerOInfo ? storage.getUserAchievements(existingGame.playerOId) : Promise.resolve([])
+            playerXInfo && existingGame.playerXId ? storage.getUserAchievements(existingGame.playerXId) : Promise.resolve([]),
+            playerOInfo && existingGame.playerOId ? storage.getUserAchievements(existingGame.playerOId) : Promise.resolve([])
           ]);
           
           const gameWithPlayers = {
@@ -752,7 +752,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 connection.ws.send(JSON.stringify({
                   type: 'game_started',
                   game: refreshedGameWithPlayers,
-                  gameId: refreshedGame.id,
+                  gameId: refreshedGame?.id || 'unknown',
                   roomId: gameData.roomId,
                 }));
               }
@@ -771,7 +771,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         
         // Assign players consistently: sort by userId to ensure same assignment every time
-        const sortedPlayers = players.sort((a, b) => a.userId.localeCompare(b.userId));
+        const sortedPlayers = players.sort((a, b) => (a.userId || '').localeCompare(b.userId || ''));
         const playerX = sortedPlayers[0];
         const playerO = sortedPlayers[1];
         

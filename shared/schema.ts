@@ -183,17 +183,8 @@ export const insertGameSchema = createInsertSchema(games).pick({
   roomId: true,
   gameMode: true,
 }).extend({
-  playerXId: z.string().optional(),
-  playerOId: z.string().optional(),
-}).transform((data) => {
-  // Remove null values, keep undefined for optional fields
-  const cleaned = { ...data };
-  Object.keys(cleaned).forEach(key => {
-    if (cleaned[key as keyof typeof cleaned] === null) {
-      delete cleaned[key as keyof typeof cleaned];
-    }
-  });
-  return cleaned;
+  playerXId: z.string().nullable().optional(),
+  playerOId: z.string().nullable().optional(),
 });
 
 export const insertMoveSchema = createInsertSchema(moves).pick({
