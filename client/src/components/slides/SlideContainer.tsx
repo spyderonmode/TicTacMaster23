@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SlideId } from '@/hooks/useSlideNavigation';
+import { CompactStats } from '@/components/CompactStats';
 
 interface SlideContainerProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ interface SlideContainerProps {
   getAllSlides: () => SlideId[];
   getCurrentSlideIndex: () => number;
   navigateToSlide: (slideId: SlideId) => void;
+  user?: any;
 }
 
 const slideLabels: Record<SlideId, string> = {
@@ -20,7 +22,11 @@ const slideLabels: Record<SlideId, string> = {
   'game-mode': 'Game Mode',
   'game-board': 'Game Board',
   'statistics': 'Statistics',
-  'settings': 'Settings'
+  'settings': 'Settings',
+  'profile': 'Profile',
+  'achievements': 'Achievements',
+  'online-players': 'Online Players',
+  'theme': 'Theme'
 };
 
 export const SlideContainer = ({
@@ -32,7 +38,8 @@ export const SlideContainer = ({
   canGoBack,
   getAllSlides,
   getCurrentSlideIndex,
-  navigateToSlide
+  navigateToSlide,
+  user
 }: SlideContainerProps) => {
   const slides = getAllSlides();
   const currentIndex = getCurrentSlideIndex();
@@ -60,27 +67,37 @@ export const SlideContainer = ({
             </h2>
           </div>
           
-          {/* Slide Indicators */}
-          <div className="flex items-center space-x-2">
-            {slides.map((slideId, index) => (
-              <button
-                key={slideId}
-                onClick={() => navigateToSlide(slideId)}
-                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                  index === currentIndex 
-                    ? 'bg-blue-500 w-6' 
-                    : 'bg-slate-600 hover:bg-slate-500'
-                }`}
-                title={slideLabels[slideId]}
-              />
-            ))}
-          </div>
+          {/* Win Stats - Always visible on all slides */}
+          <div className="flex items-center space-x-6">
+            <CompactStats user={user} className="hidden md:flex" />
+            
+            {/* Slide Indicators */}
+            <div className="flex items-center space-x-2">
+              {slides.map((slideId, index) => (
+                <button
+                  key={slideId}
+                  onClick={() => navigateToSlide(slideId)}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    index === currentIndex 
+                      ? 'bg-blue-500 w-6' 
+                      : 'bg-slate-600 hover:bg-slate-500'
+                  }`}
+                  title={slideLabels[slideId]}
+                />
+              ))}
+            </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-400">
-              {currentIndex + 1} / {totalSlides}
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-400">
+                {currentIndex + 1} / {totalSlides}
+              </span>
+            </div>
           </div>
+        </div>
+        
+        {/* Mobile Stats - Show below header on mobile */}
+        <div className="md:hidden mt-3 pt-3 border-t border-slate-700">
+          <CompactStats user={user} className="justify-center" />
         </div>
       </div>
 

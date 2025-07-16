@@ -102,5 +102,27 @@
     "emailVerificationToken": "f9c9a38e-5fa5-4289-a4a9-d3346da68a1b",
     "emailVerificationExpiry": "2025-07-17T12:37:00.538Z",
     "createdAt": "2025-07-16T12:37:00.538Z"
+  },
+  {
+    "id": "a6e6f770-dc3e-4722-bfbf-f864e2cf25bc",
+    "username": "testuser_slide",
+    "password": "b55c8792d1ce458e279308835f8a97b580263503e76e1998e279703e35ad0c2e",
+    "email": "testuser_slide@example.com",
+    "displayName": "testuser_slide",
+    "profilePicture": null,
+    "isEmailVerified": false,
+    "emailVerificationToken": "c025b40d-15fb-4f05-b3ff-111da5f14284",
+    "emailVerificationExpiry": "2025-07-17T15:47:53.860Z",
+    "createdAt": "2025-07-16T15:47:53.860Z"
+  },
+  {
+    "id": "test-stats-user-123",
+    "username": "testuser",
+    "password": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+    "email": "test@example.com",
+    "displayName": "Test User",
+    "profilePicture": null,
+    "isEmailVerified": true,
+    "createdAt": "2025-07-16T15:51:00.000Z"
   }
 ]
