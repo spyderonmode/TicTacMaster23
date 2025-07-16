@@ -78,5 +78,17 @@
     "emailVerificationToken": "5ebc2a41-bff7-410e-9d71-0f683eb72c7e",
     "emailVerificationExpiry": "2025-07-17T04:48:28.124Z",
     "createdAt": "2025-07-16T04:48:28.124Z"
+  },
+  {
+    "id": "1a75a6b6-a594-4007-9cff-b1eb7987fd7b",
+    "username": "testslideuser",
+    "password": "b55c8792d1ce458e279308835f8a97b580263503e76e1998e279703e35ad0c2e",
+    "email": "testslideuser@example.com",
+    "displayName": "testslideuser",
+    "profilePicture": null,
+    "isEmailVerified": false,
+    "emailVerificationToken": "0ad47a69-367a-4316-9458-e07b6cd7bbc4",
+    "emailVerificationExpiry": "2025-07-17T10:15:02.388Z",
+    "createdAt": "2025-07-16T10:15:02.388Z"
   }
 ]
