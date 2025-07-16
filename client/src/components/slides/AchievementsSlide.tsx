@@ -15,11 +15,12 @@ interface AchievementSlideProps {
 
 interface Achievement {
   id: string;
-  name: string;
+  achievementName: string;
   description: string;
   icon: string;
   unlockedAt?: string;
   isUnlocked: boolean;
+  achievementType: string;
 }
 
 const ACHIEVEMENT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -47,7 +48,16 @@ export function AchievementsSlide({ onNavigate, onBack }: AchievementSlideProps)
   // Fetch user achievements
   const { data: achievements, isLoading } = useQuery({
     queryKey: ['achievements', user?.userId || user?.id],
-    queryFn: () => apiRequest('GET', '/api/achievements'),
+    queryFn: async () => {
+      try {
+        const response = await apiRequest('GET', '/api/achievements');
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Failed to fetch achievements:', error);
+        return [];
+      }
+    },
     enabled: !!(user?.userId || user?.id),
   });
 
@@ -62,8 +72,8 @@ export function AchievementsSlide({ onNavigate, onBack }: AchievementSlideProps)
   const getAchievementsByCategory = (category: string) => {
     if (!achievements || !Array.isArray(achievements)) return [];
     return (achievements as Achievement[]).filter((achievement: Achievement) => 
-      achievement.name.toLowerCase().includes(category) || 
-      achievement.description.toLowerCase().includes(category)
+      achievement.achievementType?.toLowerCase().includes(category) || 
+      achievement.description?.toLowerCase().includes(category)
     );
   };
 
@@ -117,7 +127,7 @@ export function AchievementsSlide({ onNavigate, onBack }: AchievementSlideProps)
               <h3 className={`font-semibold ${
                 achievement.isUnlocked ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500'
               }`}>
-                {achievement.name}
+                {achievement.achievementName}
               </h3>
               <p className={`text-sm mt-1 ${
                 achievement.isUnlocked ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400'

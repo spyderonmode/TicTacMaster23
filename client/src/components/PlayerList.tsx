@@ -8,11 +8,26 @@ interface PlayerListProps {
 }
 
 export function PlayerList({ roomId }: PlayerListProps) {
-  const { data: participants = [], isLoading } = useQuery({
+  const { data: participantsData = [], isLoading } = useQuery({
     queryKey: ["/api/rooms", roomId, "participants"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`/api/rooms/${roomId}/participants`, {
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error('Failed to fetch participants');
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Failed to fetch participants:', error);
+        return [];
+      }
+    },
     enabled: !!roomId,
     refetchInterval: 5000, // Refresh every 5 seconds
   });
+
+  const participants = participantsData || [];
 
   if (isLoading) {
     return (
@@ -31,8 +46,8 @@ export function PlayerList({ roomId }: PlayerListProps) {
     );
   }
 
-  const players = participants.filter(p => p.role === 'player');
-  const spectators = participants.filter(p => p.role === 'spectator');
+  const players = participants.filter((p: any) => p.role === 'player');
+  const spectators = participants.filter((p: any) => p.role === 'spectator');
 
   return (
     <Card className="bg-slate-800 border-slate-700">

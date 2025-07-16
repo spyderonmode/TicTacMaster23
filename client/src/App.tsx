@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
+import { isEmailVerified } from "@/lib/userUtils";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import Auth from "@/pages/auth";
@@ -66,20 +67,20 @@ function Router() {
   }
 
   // If user is authenticated but email is not verified, redirect to auth for verification
-  if (isAuthenticated && user && !user.isEmailVerified) {
+  if (isAuthenticated && user && !isEmailVerified(user)) {
     return <Auth />;
   }
 
   return (
     <Switch>
       <Route path="/auth">
-        {isAuthenticated && user?.isEmailVerified ? <Home /> : <Auth />}
+        {isAuthenticated && isEmailVerified(user) ? <Home /> : <Auth />}
       </Route>
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/not-found" component={NotFound} />
       <Route path="/">
-        {isAuthenticated && user?.isEmailVerified ? <Home /> : <Auth />}
+        {isAuthenticated && isEmailVerified(user) ? <Home /> : <Auth />}
       </Route>
       <Route component={NotFound} />
     </Switch>

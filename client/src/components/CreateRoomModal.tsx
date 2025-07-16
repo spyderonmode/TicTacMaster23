@@ -132,7 +132,7 @@ export function CreateRoomModal({ open, onClose, onRoomCreated }: CreateRoomModa
             <Checkbox
               id="private"
               checked={isPrivate}
-              onCheckedChange={setIsPrivate}
+              onCheckedChange={(checked) => setIsPrivate(checked === true)}
               className="border-slate-600"
               disabled={createRoomMutation.isPending}
             />
