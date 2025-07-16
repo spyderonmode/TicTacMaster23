@@ -47,7 +47,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
 
   // Track ranking changes
   useEffect(() => {
-    if (rankings && rankings.length > 0) {
+    if (rankings && Array.isArray(rankings) && rankings.length > 0) {
       setPreviousRankings(prev => {
         if (prev.length === 0) return rankings;
         
@@ -127,7 +127,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
   };
 
   const calculateStats = (rankings: PlayerRanking[]): RankingStats => {
-    if (!rankings || rankings.length === 0) {
+    if (!rankings || !Array.isArray(rankings) || rankings.length === 0) {
       return {
         totalPlayers: 0,
         averageWinRate: 0,
@@ -154,7 +154,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
   };
 
   const renderChart = () => {
-    if (!rankings || rankings.length === 0) return null;
+    if (!rankings || !Array.isArray(rankings) || rankings.length === 0) return null;
 
     const topPlayers = rankings.slice(0, 10);
     const maxWinRate = Math.max(...topPlayers.map(p => p.winRate));
@@ -252,7 +252,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {rankings
+              {rankings && Array.isArray(rankings) ? rankings
                 .filter(player => player.streak > 1)
                 .sort((a, b) => b.streak - a.streak)
                 .slice(0, 6)
@@ -301,7 +301,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
                       </div>
                     </div>
                   </motion.div>
-                ))}
+                )) : []}
             </div>
           </CardContent>
         </Card>
@@ -310,7 +310,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
   };
 
   const renderStats = () => {
-    if (!rankings || rankings.length === 0) return null;
+    if (!rankings || !Array.isArray(rankings) || rankings.length === 0) return null;
 
     const stats = calculateStats(rankings);
 
@@ -505,7 +505,7 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
               transition={{ duration: 0.3 }}
               className="space-y-3"
             >
-              {rankings?.map((player: PlayerRanking, index) => (
+              {rankings && Array.isArray(rankings) ? rankings.map((player: PlayerRanking, index) => (
                 <motion.div
                   key={player.userId}
                   initial={{ opacity: 0, x: -20 }}
@@ -608,9 +608,9 @@ export function PlayerRankings({ currentUserId }: PlayerRankingsProps) {
                     <p className="text-xs text-gray-500">games</p>
                   </div>
                 </motion.div>
-              ))}
+              )) : []}
               
-              {(!rankings || rankings.length === 0) && (
+              {(!rankings || !Array.isArray(rankings) || rankings.length === 0) && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

@@ -36,7 +36,7 @@ export function AchievementModal({ open, onClose, userId }: AchievementModalProp
   ];
 
   const getAchievementsByCategory = (types: string[]) => {
-    if (!achievements) return [];
+    if (!achievements || !Array.isArray(achievements)) return [];
     return achievements.filter((achievement: any) => types.includes(achievement.achievementType));
   };
 
@@ -115,12 +115,12 @@ export function AchievementModal({ open, onClose, userId }: AchievementModalProp
                 );
               })}
               
-              {achievements && achievements.length === 0 && (
+              {(achievements && Array.isArray(achievements) && achievements.length === 0) ? (
                 <div className="text-center py-8 text-gray-500">
                   <Trophy className="w-16 h-16 mx-auto mb-4 opacity-50" />
                   <p>No achievements yet. Start playing to earn your first badge!</p>
                 </div>
-              )}
+              ) : null}
             </div>
           </ScrollArea>
         )}

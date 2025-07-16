@@ -1,3 +1,7 @@
+// Placeholder auth and storage exports for compatibility (app uses custom auth)
+export const auth = null;
+export const storage = null;
+
 // Simple auth API calls
 export const login = async (credentials: { username: string; password: string }) => {
   const response = await fetch('/api/auth/login', {

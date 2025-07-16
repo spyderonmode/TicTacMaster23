@@ -9,6 +9,7 @@ export interface User {
   displayName?: string;
   username?: string;
   profileImageUrl?: string;
+  profilePicture?: string;
   isEmailVerified?: boolean;
   wins?: number;
   losses?: number;

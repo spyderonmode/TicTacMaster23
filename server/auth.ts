@@ -6,6 +6,7 @@ import session from 'express-session';
 import MemoryStore from 'memorystore';
 import { storage } from './storage';
 import { createEmailService } from './emailService';
+import './types'; // Import session type augmentation
 
 interface User {
   id: string;
@@ -76,7 +77,7 @@ async function createUser(username: string, password: string, email?: string): P
     password: hashPassword(password),
     email,
     displayName: username,
-    profilePicture: null,
+    profilePicture: undefined,
     isEmailVerified: false,
     emailVerificationToken: verificationToken,
     emailVerificationExpiry: verificationExpiry,

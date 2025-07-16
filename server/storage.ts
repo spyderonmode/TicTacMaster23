@@ -440,8 +440,8 @@ export class DatabaseStorage implements IStorage {
       }));
       
     } catch (error) {
-      console.error('Error fetching player rankings:', error);
-      throw error;
+      console.error('Database unavailable, returning empty rankings:', error);
+      return [];
     }
   }
 
