@@ -32,16 +32,15 @@ export const CompactStats = ({ user, className = "" }: CompactStatsProps) => {
         return data as UserStats;
       } catch (error) {
         console.error('Failed to fetch user stats:', error);
-        // Return mock data for development/testing
         return {
-          wins: 15,
-          losses: 8,
-          draws: 3,
-          bestStreak: 5,
-          avgGameTime: '3m 45s',
-          aiWins: 8,
-          localWins: 4,
-          onlineWins: 3,
+          wins: 0,
+          losses: 0,
+          draws: 0,
+          bestStreak: 0,
+          avgGameTime: 'N/A',
+          aiWins: 0,
+          localWins: 0,
+          onlineWins: 0,
         } as UserStats;
       }
     },
@@ -49,14 +48,14 @@ export const CompactStats = ({ user, className = "" }: CompactStatsProps) => {
   });
 
   const userStats = userStatsData || {
-    wins: 15,
-    losses: 8,
-    draws: 3,
-    bestStreak: 5,
-    avgGameTime: '3m 45s',
-    aiWins: 8,
-    localWins: 4,
-    onlineWins: 3,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    bestStreak: 0,
+    avgGameTime: 'N/A',
+    aiWins: 0,
+    localWins: 0,
+    onlineWins: 0,
   };
 
   const totalGames = (userStats.wins || 0) + (userStats.losses || 0) + (userStats.draws || 0);
